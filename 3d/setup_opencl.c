@@ -85,22 +85,6 @@ void	get_kernels(t_sdl *iw)
 		sizeof(cl_mem), (void *)&iw->k.m_cint);
 }
 
-void	load_kernel2(t_kernel *k)
-{
-	k->platforms = (cl_platform_id*)malloc(k->ret_num_platforms
-		* sizeof(cl_platform_id));
-	k->ret = clGetPlatformIDs(k->ret_num_platforms, k->platforms, NULL);
-	k->ret = clGetDeviceIDs(k->platforms[0], CL_DEVICE_TYPE_ALL, 1,
-		&k->device_id, &k->ret_num_devices);
-	k->context = clCreateContext(NULL, 1, &k->device_id, NULL, NULL, &k->ret);
-	k->command_queue = clCreateCommandQueue(k->context, k->device_id,
-		0, &k->ret);
-	k->program = clCreateProgramWithSource(k->context, 1,
-		(const char **)&k->source_str,
-		(const size_t *)&k->source_size, &k->ret);
-	k->ret = clBuildProgram(k->program, 1, &k->device_id, NULL, NULL, NULL);
-}
-
 void	load_kernel(t_kernel *k, t_sdl *iw)
 {
 	int		fd;
@@ -123,5 +107,16 @@ void	load_kernel(t_kernel *k, t_sdl *iw)
 		k->ret = 1;
 		return ;
 	}
-	load_kernel2(k);
+	k->platforms = (cl_platform_id*)malloc(k->ret_num_platforms
+		* sizeof(cl_platform_id));
+	k->ret = clGetPlatformIDs(k->ret_num_platforms, k->platforms, NULL);
+	k->ret = clGetDeviceIDs(k->platforms[0], CL_DEVICE_TYPE_ALL, 1,
+		&k->device_id, &k->ret_num_devices);
+	k->context = clCreateContext(NULL, 1, &k->device_id, NULL, NULL, &k->ret);
+	k->command_queue = clCreateCommandQueue(k->context, k->device_id,
+		0, &k->ret);
+	k->program = clCreateProgramWithSource(k->context, 1,
+		(const char **)&k->source_str,
+		(const size_t *)&k->source_size, &k->ret);
+	k->ret = clBuildProgram(k->program, 1, &k->device_id, NULL, NULL, NULL);
 }
